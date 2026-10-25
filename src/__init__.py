@@ -1,0 +1,1 @@
+"""Stock Price Predictor - A Streamlit application for stock price prediction using linear regression."""
