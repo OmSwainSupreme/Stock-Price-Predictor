@@ -149,9 +149,9 @@ def reconstruct_latest_features(raw_df: pd.DataFrame) -> pd.DataFrame:
     latest_features['lag_3'] = prices[-3]      # 3 sessions ago
     latest_features['lag_5'] = prices[-5]      # 5 sessions ago
     
-    # Moving averages (shifted by 1, so use prices up to -1)
-    latest_features['ma_5'] = np.mean(prices[-6:-1])   # Sessions -6 to -2 (5 sessions before most recent)
-    latest_features['ma_10'] = np.mean(prices[-11:-1]) # Sessions -11 to -2 (10 sessions before most recent)
+    # Moving averages (using the most recent available data)
+    latest_features['ma_5'] = np.mean(prices[-5:])   # Mean of last 5 prices
+    latest_features['ma_10'] = np.mean(prices[-10:]) # Mean of last 10 prices
     
     # Daily return: (most_recent - previous) / previous
     latest_features['daily_return'] = (prices[-1] - prices[-2]) / prices[-2]

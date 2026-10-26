@@ -196,30 +196,30 @@ class TestReconstructLatestFeatures:
     
     def test_reconstruction_for_next_session(self):
         """Test that reconstructed features are correct for next-session prediction.
-        
+
         Given raw data with prices p[0], p[1], ..., p[n-1] (n prices),
         reconstruct_latest_features should produce features to predict p[n] (next session):
         - lag_1 = p[n-1] (most recent)
         - lag_2 = p[n-2]
         - lag_3 = p[n-3]
         - lag_5 = p[n-5]
-        - ma_5 = mean(p[n-6:n-1]) = mean of 5 sessions before most recent
-        - ma_10 = mean(p[n-11:n-1]) = mean of 10 sessions before most recent
+        - ma_5 = mean(p[n-5:n]) = mean of last 5 prices including most recent
+        - ma_10 = mean(p[n-10:n]) = mean of last 10 prices including most recent
         - daily_return = (p[n-1] - p[n-2]) / p[n-2]
         """
         df = create_synthetic_data(30)
         prices = df['Adj Close'].values
         n = len(prices)
-        
+
         reconstructed = reconstruct_latest_features(df)
-        
+
         assert not reconstructed.empty
         assert np.isclose(reconstructed['lag_1'].values[0], prices[n-1])
         assert np.isclose(reconstructed['lag_2'].values[0], prices[n-2])
         assert np.isclose(reconstructed['lag_3'].values[0], prices[n-3])
         assert np.isclose(reconstructed['lag_5'].values[0], prices[n-5])
-        assert np.isclose(reconstructed['ma_5'].values[0], np.mean(prices[n-6:n-1]))
-        assert np.isclose(reconstructed['ma_10'].values[0], np.mean(prices[n-11:n-1]))
+        assert np.isclose(reconstructed['ma_5'].values[0], np.mean(prices[n-5:n]))
+        assert np.isclose(reconstructed['ma_10'].values[0], np.mean(prices[n-10:n]))
         assert np.isclose(reconstructed['daily_return'].values[0], (prices[n-1] - prices[n-2]) / prices[n-2])
     
     def test_insufficient_data_returns_empty(self):
